@@ -10,7 +10,7 @@ clearml_project = "Public Projects"
 clearml_task = "train mnist"
 queue = 'queue-cpu-only'
 output = "s3://minio.apps-crc.testing:80/clearml-models"
-dataset_id = '9951ae0650a0442b8653ff547ed91836'
+dataset_id = '21a7852c3cb54bac80a101ccdd061b38'
 s3_access_key = "iO1CDmdJRwUFbDfx"
 s3_secret_key = "blwv8gdpGnUbRecIcaWDXfmn8SyBeOeb"
 
