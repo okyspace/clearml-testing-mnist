@@ -27,14 +27,15 @@ from __future__ import print_function
 #     args = parser.parse_args()
 #     return args
 
-def train_model(project, task, output, image, queue, container_args, epochs,
+def train_model(project, task, queue, image, output_uri, container_args, epochs,
     dataset_id, batch_size, test_batch_size, log_interval, seed, lr, gamma, save_model, weights):
+    print('output_uri {}'.format(output_uri))
     import os
     from clearml import Task, Logger
     from clearml import Dataset
     from clearml import OutputModel
 
-    task = Task.init(project_name=project, task_name=task, output_uri=output)
+    task = Task.init(project_name=project, task_name=task, output_uri=output_uri)
     task.set_base_docker(docker_image=image, docker_arguments=container_args)
     task.execute_remotely(queue_name=queue, exit_process=True)
 
