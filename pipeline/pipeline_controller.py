@@ -98,7 +98,7 @@ def main():
             task=args.experiment_task,
             queue=args.experiment_queue,
             image=args.experiment_image,
-            output=args.experiment_output,
+            output_uri=args.experiment_output,
             container_args=args.experiment_container_args,
             epochs=args.epochs,
             dataset_id='${Process_Dataset.dataset_id}',
@@ -116,10 +116,10 @@ def main():
 
     # For debugging purposes run on the pipeline on current machine
     # Use run_pipeline_steps_locally=True to further execute the pipeline component Tasks as subprocesses.
-    # pipe.start_locally(run_pipeline_steps_locally=True)
+    pipe.start_locally(run_pipeline_steps_locally=True)
 
     # Start the pipeline on the services queue (remote machine, default on the clearml-server)
-    pipe.start()
+    #pipe.start()
 
     print('pipeline completed')    
 

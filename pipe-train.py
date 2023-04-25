@@ -6,16 +6,16 @@ from clearml import OutputModel
 import os
 
 
-clearml_project = "Public Projects"
-clearml_task = "train mnist"
-queue = 'queue-cpu-only'
-output = "s3://minio.apps-crc.testing:80/clearml-models"
-dataset_id = '21a7852c3cb54bac80a101ccdd061b38'
-s3_access_key = "iO1CDmdJRwUFbDfx"
-s3_secret_key = "blwv8gdpGnUbRecIcaWDXfmn8SyBeOeb"
+clearml_project = "PublicProjects"
+clearml_task = "train-mnist"
+queue = 'queue-public'
+output = "s3://minio.apps-crc.testing:80/clearml-public-models"
+dataset_id = '56b8b755a66e4a4abfbf3f69b5c97a70'
+s3_access_key = "K8HYLZM3F1X8KFHQX69N"
+s3_secret_key = "snC6jiuMSQYGCAXTpEYFAJKor1hqWk91wWHp5fbx9FcD9Y9ClW"
 
-image = "default-route-openshift-image-registry.apps-crc.testing/clearml-agent/ubuntu:bionic"
-docker_args = "--env AWS_ACCESS_KEY_ID=iO1CDmdJRwUFbDfx --env AWS_SECRET_ACCESS_KEY=blwv8gdpGnUbRecIcaWDXfmn8SyBeOeb --env GIT_SSL_NO_VERIFY=true"
+image = "default-route-openshift-image-registry.apps-crc.testing/clearml-agent/ubuntu:focal-sessions"
+docker_args = "--env AWS_ACCESS_KEY_ID=K8HYLZM3F1X8KFHQX69N --env AWS_SECRET_ACCESS_KEY=snC6jiuMSQYGCAXTpEYFAJKor1hqWk91wWHp5fbx9FcD9Y9ClW --env GIT_SSL_NO_VERIFY=true"
 weights_file = "mnist.pt"
 
 os.environ['AWS_ACCESS_KEY_ID'] = s3_access_key
@@ -112,7 +112,7 @@ def main():
                         help='input batch size for training (default: 64)')
         parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N',
                         help='input batch size for testing (default: 1000)')
-        parser.add_argument('--epochs', type=int, default=3000, metavar='N',
+        parser.add_argument('--epochs', type=int, default=1, metavar='N',
                         help='number of epochs to train (default: 14)')
         parser.add_argument('--lr', type=float, default=1.0, metavar='LR',
                         help='learning rate (default: 1.0)')
