@@ -5,17 +5,28 @@ from clearml import Dataset
 from clearml import OutputModel
 import os
 
+# Public Case
+# clearml_project = "PublicProjects"
+# clearml_task = "train-mnist"
+# queue = 'queue-public'
+# output = "s3://minio.apps-crc.testing:80/clearml-public-models"
+# dataset_id = '56b8b755a66e4a4abfbf3f69b5c97a70'
+# s3_access_key = "K8HYLZM3F1X8KFHQX69N"
+# s3_secret_key = "snC6jiuMSQYGCAXTpEYFAJKor1hqWk91wWHp5fbx9FcD9Y9ClW"
+# docker_args = "--env AWS_ACCESS_KEY_ID=K8HYLZM3F1X8KFHQX69N --env AWS_SECRET_ACCESS_KEY=snC6jiuMSQYGCAXTpEYFAJKor1hqWk91wWHp5fbx9FcD9Y9ClW --env GIT_SSL_NO_VERIFY=false"
 
-clearml_project = "PublicProjects"
+# Private Case
+clearml_project = "ProjectA"
 clearml_task = "train-mnist"
-queue = 'queue-public'
-output = "s3://minio.apps-crc.testing:80/clearml-public-models"
+queue = 'queue-a'
+output = "s3://minio.apps-crc.testing:80/proj-a/models"
 dataset_id = '56b8b755a66e4a4abfbf3f69b5c97a70'
-s3_access_key = "K8HYLZM3F1X8KFHQX69N"
-s3_secret_key = "snC6jiuMSQYGCAXTpEYFAJKor1hqWk91wWHp5fbx9FcD9Y9ClW"
+s3_access_key = "SZGMY3YZOHB53G7V0MPA"
+s3_secret_key = "4wYKmhIUr5ekGz0lATUdg6oD8IucIkUftHBwV0MOeX5bTrxZBs"
+docker_args = "--env AWS_ACCESS_KEY_ID=SZGMY3YZOHB53G7V0MPA --env AWS_SECRET_ACCESS_KEY=4wYKmhIUr5ekGz0lATUdg6oD8IucIkUftHBwV0MOeX5bTrxZBs --env GIT_SSL_NO_VERIFY=false"
+
 
 image = "default-route-openshift-image-registry.apps-crc.testing/clearml-agent/ubuntu:focal-sessions"
-docker_args = "--env AWS_ACCESS_KEY_ID=K8HYLZM3F1X8KFHQX69N --env AWS_SECRET_ACCESS_KEY=snC6jiuMSQYGCAXTpEYFAJKor1hqWk91wWHp5fbx9FcD9Y9ClW --env GIT_SSL_NO_VERIFY=true"
 weights_file = "mnist.pt"
 
 os.environ['AWS_ACCESS_KEY_ID'] = s3_access_key

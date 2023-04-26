@@ -4,7 +4,7 @@ from clearml import Task
 PROJECT = 'PublicHyperparams/HyperparamsTuningByScripts'
 TASK = 'optimising-mnist-public'
 QUEUE = 'queue-public'
-TASK_ID = "c8380c78003343c7964c8d025a82c009"
+TASK_ID = "a5ece504d4f547388df6cb1e38a625f7"
 
 image = "default-route-openshift-image-registry.apps-crc.testing/clearml-agent/ubuntu:focal-sessions"
 docker_args = "--env AWS_ACCESS_KEY_ID=bZPfiMnVhRsuJfTl --env AWS_SECRET_ACCESS_KEY=qpCTdahpdAH2Skw79QB7sDwVLGbdECXg  --env GIT_SSL_NO_VERIFY=false"

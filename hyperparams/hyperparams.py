@@ -7,7 +7,7 @@ QUEUE = 'queue-public'
 TASK_ID = "a5ece504d4f547388df6cb1e38a625f7"
 
 image = "default-route-openshift-image-registry.apps-crc.testing/clearml-agent/ubuntu:focal-sessions"
-docker_args = "--env AWS_ACCESS_KEY_ID=bZPfiMnVhRsuJfTl --env AWS_SECRET_ACCESS_KEY=qpCTdahpdAH2Skw79QB7sDwVLGbdECXg  --env GIT_SSL_NO_VERIFY=false"
+docker_args = "--env AWS_ACCESS_KEY_ID=fvdFCIKgp2x9YLpI --env AWS_SECRET_ACCESS_KEY=AC4xVqE82jvSCfeLZBWpFT6685yWoDaJ  --env GIT_SSL_NO_VERIFY=false"
 
 def check_task(task_id):
 	print('Task ID {}'.format(task_id))

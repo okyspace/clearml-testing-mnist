@@ -3,13 +3,12 @@ from __future__ import print_function
 from clearml import Task, Logger
 from clearml import Dataset
 
-clearml_project = "Public Projects"
-clearml_task = "mnist"
+clearml_project = "PublicProjects"
+clearml_task = "process-mnist"
 queue = 'queue-cpu-only'
 output = "s3://minio.apps-crc.testing:80/clearml-datasets/mnist"
-dataset_id = '45288c4fe4394ad185f0ca319ffeaaf0'
-docker_args = "--env AWS_ACCESS_KEY_ID=iO1CDmdJRwUFbDfx --env AWS_SECRET_ACCESS_KEY=blwv8gdpGnUbRecIcaWDXfmn8SyBeOeb --env TRAINS_AGENT_GIT_USER='' --env TRAINS_AGENT_GIT_PASS='' --env GIT_SSL_NO_VERIFY=true"
-
+dataset_id = 'c1bafd4f901045afaceb27c18bc6ab18'
+docker_args = "--env AWS_ACCESS_KEY_ID=34VtVODme9ZwMQMK --env AWS_SECRET_ACCESS_KEY=m0RIai6tzDpyTttKPg7OvSQjdcbemK0h --env TRAINS_AGENT_GIT_USER='' --env TRAINS_AGENT_GIT_PASS='' --env GIT_SSL_NO_VERIFY=true"
 image = "default-route-openshift-image-registry.apps-crc.testing/clearml-agent/ubuntu:bionic"
 
 def main():
