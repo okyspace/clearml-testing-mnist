@@ -1,8 +1,8 @@
 PROJECT=ProjectA/Pipelines
-TASK=mnist-pipeline
+TASK=mnist-pipeline-private
 QUEUE=queue-a
 DATASET_PROJECT=ProjectA/Datasets
-DATASET_NAME=mnist-data
+DATASET_NAME=mnist-data-private
 DATASET_INPUT=../images
 DATASET_OUTPUT="s3://minio.apps-crc.testing:80/proj-a/datasets"
 MODEL_OUTPUT="s3://minio.apps-crc.testing:80/proj-a/models"
@@ -11,14 +11,14 @@ S3_SECRET=4wYKmhIUr5ekGz0lATUdg6oD8IucIkUftHBwV0MOeX5bTrxZBs
 S3_REGION=us-east-1
 
 PROCESS_PROJECT=ProjectA/Experiments
-PROCESS_TASK=process-mnist
+PROCESS_TASK=process-mnist-private
 PROCESS_QUEUE=queue-a
 CONTAINER_ARGS='--env AWS_ACCESS_KEY_ID=SZGMY3YZOHB53G7V0MPA --env AWS_SECRET_ACCESS_KEY=4wYKmhIUr5ekGz0lATUdg6oD8IucIkUftHBwV0MOeX5bTrxZBs'
 IMAGE=default-route-openshift-image-registry.apps-crc.testing/clearml-agent/ubuntu:focal-sessions
 OUTPUT="s3://minio.apps-crc.testing:80/clearml-datasets"
 
 EXPERIMENT_PROJECT=ProjectA/Experiments
-EXPERIMENT_TASK=train-mnist
+EXPERIMENT_TASK=train-mnist-private
 EXPERIMENT_OUTPUT=s3://minio.apps-crc.testing:80/clearml-models
 EXPERIMENT_IMAGE=default-route-openshift-image-registry.apps-crc.testing/clearml-agent/ubuntu:focal-sessions
 EXPERIMENT_QUEUE=queue-a

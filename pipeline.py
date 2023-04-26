@@ -4,8 +4,8 @@ from clearml.automation import PipelineController
 PIPELINE_NAME = "Public Pipelines"
 PIPELINE_PROJECT = "Pipeline Project"
 PIPELINE_VERSION = "0.0.1"
-PROCESS_TASK_ID = "d19cf78a082b4da9b38088855eef50b7"
-TRAINING_TASK_ID = "25525276e3174916ac6bc7446205bbc6"
+PROCESS_TASK_ID = "179462cc8381430e87792b94c5068b20"
+TRAINING_TASK_ID = "2df9b231398f4e15a95ec608d65c9fb2"
 QUEUE = 'queue-cpu-only'
 
 def main():
