@@ -17,11 +17,12 @@ RUN dpkg -i code.deb
 
 COPY dropbearmulti /root/dropbearmulti
 
-#RUN echo "install jupyter server ........"
-#RUN pip install \
-#	pip --upgrade \
-#	setuptools --upgrade \
-#	wheel --upgrade \ 
-#	jupyterlab \
+RUN echo "install jupyter server ........"
+RUN pip install \
+	pip --upgrade \
+	setuptools --upgrade \
+	wheel --upgrade \ 
+	jupyterlab \
+	jupyterlab_git
 
 WORKDIR /root
