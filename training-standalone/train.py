@@ -18,7 +18,7 @@ s3_access_key = "WkflU71mTlwC3aFT"
 s3_secret_key = "Ean4vWI7UGdrkUE3H3Mjt1ZRWquRh2QD"
 docker_args = "--security-opt label=disable"
 
-image = "python:latest"
+image = "docker.io/pytorch/pytorch:1.13.1-cuda11.6-cudnn8-runtime"
 weights_file = "mnist.pt"
 
 os.environ['AWS_ACCESS_KEY_ID'] = s3_access_key
@@ -141,10 +141,11 @@ def main():
 
     print('datasets_id {}'.format(args.datasets_id))
 
-    if use_cuda:
+    # if use_cuda:
+    if True:
         device = torch.device("cuda")
-    else:
-        device = torch.device("cpu")
+    # else:
+    #     device = torch.device("cpu")
 
     print('device {}'.format(device))
 

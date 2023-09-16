@@ -6,23 +6,15 @@ from clearml import OutputModel
 import os
 
 
-clearml_project = "ProjectPublic"
-clearml_task = "train-mnist-remote-agent"
-queue = 'queue-public'
-# queue = 'services'
-output = "s3://s3.apps-crc.testing:80/clearml-public-models/mnist"
-dataset_id = '1e3054437968449294513ef1601468d0'
-s3_access_key = "WkflU71mTlwC3aFT"
-s3_secret_key = "Ean4vWI7UGdrkUE3H3Mjt1ZRWquRh2QD"
+clearml_project = "[Admin] Project-A"
+clearml_task = "train-mnist"
+queue = 'queue-2cpu-4GRAM'
+output = "s3://s3.apps-crc.testing:443/clearml-models"
+dataset_id = '0651fa9ab0e143a99f7bf4205e60067b'
 docker_args = ""
 
-image = "python:latest"
+image = "docker.io/okydocker/pytorch:1.13.1-cuda11.6-cudnn8-runtime"
 weights_file = "mnist.pt"
-
-os.environ['AWS_ACCESS_KEY_ID'] = s3_access_key
-os.environ['AWS_SECRET ACCESS_KEY'] = s3_secret_key
-os.environ['AWS_DEFAULT_REGION'] = 'us-east-1'
-
 
 def main():
     task = Task.init(project_name=clearml_project, task_name=clearml_task, output_uri=output)
@@ -113,7 +105,7 @@ def main():
                         help='input batch size for training (default: 64)')
         parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N',
                         help='input batch size for testing (default: 1000)')
-        parser.add_argument('--epochs', type=int, default=1, metavar='N',
+        parser.add_argument('--epochs', type=int, default=5, metavar='N',
                         help='number of epochs to train (default: 14)')
         parser.add_argument('--lr', type=float, default=1.0, metavar='LR',
                         help='learning rate (default: 1.0)')
@@ -191,4 +183,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
