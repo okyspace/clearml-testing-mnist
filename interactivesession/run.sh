@@ -1,6 +1,6 @@
 IMAGE=docker.io/okydocker/ubuntu:focal-session
-QUEUE=queue-session
-PROJECT="[Admin] Project-A"
+QUEUE=queue-project-alpha-interactivesession-2cpu-4Gram
+PROJECT="Project-Alpha"
 
 clearml-session \
 	--docker "$IMAGE" \
