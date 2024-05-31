@@ -18,8 +18,7 @@ def get_args():
 
 def main():
   args = get_args()
-  id = create_datasets(args.project, args.task, args.data_path, args.s3_output)
-  print('dataset created {}'.format(id))
+  create_datasets(args.project, args.task, args.data_path, args.s3_output)
 
 
 if __name__ == '__main__':

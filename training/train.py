@@ -5,23 +5,37 @@ from clearml import Dataset
 from clearml import OutputModel
 import os
 
+def main(
+    clearml_project,
+    clearml_task,
+    clearml_output,
+    clearml_image,
+    clearml_queue,
+    batch_size,
+    test_batch_size,
+    lr,
+    gamma,
+    save_model,
+    model_filename,
+    dry_run,
+    log_interval,
+    no_cuda,
+    seed,
+    dataset_id,
+    epochs
+):
+	###################################################################################################################
+	######## These are the three lines of codes added to the ML training codes for clearml to execute your task. ######
+	###################################################################################################################
+    # create clearml task in defined project and specify where the codes will output to
+    task = Task.init(project_name=clearml_project, task_name=clearml_task, output_uri=clearml_output)
+    # set the container to be used; the ml training will be done in the container
+    task.set_base_docker(docker_image=clearml_image)
+    # set the clearml queue. the queue will have a defined specs (cpu, ram, gpu) and 
+    # clearml will spin up a pod based on the defined specs to run the container set earlier.
+    task.execute_remotely(queue_name=clearml_queue, exit_process=True)
+    ###################################################################################################################
 
-clearml_project = "[Admin] Project-A"
-clearml_task = "train-mnist"
-queue = 'queue-2cpu-4GRAM'
-output = "s3://s3.apps-crc.testing:443/clearml-models"
-dataset_id = '0651fa9ab0e143a99f7bf4205e60067b'
-docker_args = ""
-
-image = "docker.io/okydocker/pytorch:1.13.1-cuda11.6-cudnn8-runtime"
-weights_file = "mnist.pt"
-
-def main():
-    task = Task.init(project_name=clearml_project, task_name=clearml_task, output_uri=output)
-    task.set_base_docker(docker_image=image)
-    task.execute_remotely(queue_name=queue, exit_process=True)
-
-    import argparse
     import torch
     import torch.nn as nn
     import torch.nn.functional as F
@@ -56,7 +70,7 @@ def main():
             return output
 
 
-    def train(args, model, device, train_loader, optimizer, epoch):
+    def train(model, device, train_loader, optimizer, epoch, log_interval, dry_run):
         model.train()
         for batch_idx, (data, target) in enumerate(train_loader):
             data, target = data.to(device), target.to(device)
@@ -65,13 +79,13 @@ def main():
             loss = F.nll_loss(output, target)
             loss.backward()
             optimizer.step()
-            if batch_idx % args.log_interval == 0:
+            if batch_idx % log_interval == 0:
                 Logger.current_logger().report_scalar(
                     'train', 'loss', iteration=(epoch * len(train_loader) + batch_idx), value=loss.item())                    
                 print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                     epoch, batch_idx * len(data), len(train_loader.dataset),
                     100. * batch_idx / len(train_loader), loss.item()))
-                if args.dry_run:
+                if dry_run:
                     break
 
 
@@ -98,38 +112,8 @@ def main():
             test_loss, correct, len(test_loader.dataset),
             100. * correct / len(test_loader.dataset)))
 
-    def get_args():
-        # Training settings
-        parser = argparse.ArgumentParser(description='PyTorch MNIST Example')
-        parser.add_argument('--batch-size', type=int, default=64, metavar='N',
-                        help='input batch size for training (default: 64)')
-        parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N',
-                        help='input batch size for testing (default: 1000)')
-        parser.add_argument('--epochs', type=int, default=5, metavar='N',
-                        help='number of epochs to train (default: 14)')
-        parser.add_argument('--lr', type=float, default=1.0, metavar='LR',
-                        help='learning rate (default: 1.0)')
-        parser.add_argument('--gamma', type=float, default=0.7, metavar='M',
-                        help='Learning rate step gamma (default: 0.7)')
-        parser.add_argument('--no-cuda', action='store_true', default=True,
-                        help='disables CUDA training')
-        parser.add_argument('--dry-run', action='store_true', default=False,
-                        help='quickly check a single pass')
-        parser.add_argument('--seed', type=int, default=1, metavar='S',
-                        help='random seed (default: 1)')
-        parser.add_argument('--log-interval', type=int, default=200, metavar='N',
-                        help='how many batches to wait before logging training status')
-        parser.add_argument('--save-model', action='store_true', default=True,
-                        help='For Saving the current Model')
-        parser.add_argument('--datasets-id', default=dataset_id)
-        args = parser.parse_args()
-        return args
-
-    args = get_args()
-    use_cuda = not args.no_cuda
-    torch.manual_seed(args.seed)
-
-    print('datasets_id {}'.format(args.datasets_id))
+    use_cuda = not no_cuda
+    torch.manual_seed(seed)
 
     if use_cuda:
         device = torch.device("cuda")
@@ -138,8 +122,8 @@ def main():
 
     print('device {}'.format(device))
 
-    train_kwargs = {'batch_size': args.batch_size}
-    test_kwargs = {'batch_size': args.test_batch_size}
+    train_kwargs = {'batch_size': batch_size}
+    test_kwargs = {'batch_size': test_batch_size}
     if use_cuda:
         cuda_kwargs = {'num_workers': 1,
                        'pin_memory': True,
@@ -154,32 +138,93 @@ def main():
     ])
 
     # get data from clearml datasets
-    dataset_path = Dataset.get(dataset_id=args.datasets_id)
+    dataset_path = Dataset.get(dataset_id=dataset_id)
     dataset_path = dataset_path.get_local_copy()
     train_ds = datasets.ImageFolder(root=os.path.join(dataset_path, 'train'), transform=transform)
     test_ds = datasets.ImageFolder(root=os.path.join(dataset_path, 'test'), transform=transform)
 
+    # get data loader
     train_loader = torch.utils.data.DataLoader(train_ds,**train_kwargs)
     test_loader = torch.utils.data.DataLoader(test_ds, **test_kwargs)
 
-    # get model
+    # get model and optimizer
     model = Net().to(device)
-    optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
+    optimizer = optim.Adadelta(model.parameters(), lr=lr)
+    scheduler = StepLR(optimizer, step_size=1, gamma=gamma)
 
-    # train
-    scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
-    for epoch in range(1, args.epochs + 1):
-        train(args, model, device, train_loader, optimizer, epoch)
+    # train    
+    for epoch in range(1, epochs + 1):
+        train(model, device, train_loader, optimizer, epoch, log_interval, dry_run)
         test(model, device, test_loader)
         scheduler.step()
 
-    # save weights
-    if args.save_model:
-        torch.jit.script(model).save(weights_file)
-        OutputModel().update_weights(weights_file)
+    # save model weights
+    if save_model:
+        torch.jit.script(model).save(model_filename)
+        # OutputModel().update_weights(weights_file)
         # save in torchscipt instead. 
-        # torch.save(model.state_dict(), "mnist.pt")
+        # torch.save(model.state_dict(), args.model_filename)
+
+def get_args():
+    import argparse
+    # clearml settings
+    parser = argparse.ArgumentParser(description='PyTorch MNIST')
+    parser.add_argument('--clearml-project', 
+                    help='enter the project in clearml; must be a project that you have access rights')
+    parser.add_argument('--clearml-task', 
+                    help='enter the task name')
+    parser.add_argument('--clearml-queue', 
+                    help='enter the queue to orchestrate the clearml task')
+    parser.add_argument('--clearml-image', 
+                    help='enter the image to be used for model training')
+    parser.add_argument('--clearml-output', 
+                    help='enter the s3 bucket to store experiment outputs')
+    # experiment settings        
+    parser.add_argument('--batch-size', type=int, default=16, metavar='N',
+                    help='input batch size for training (default: 16)')
+    parser.add_argument('--test-batch-size', type=int, default=16, metavar='N',
+                    help='input batch size for testing (default: 16)')
+    parser.add_argument('--epochs', type=int, default=14, metavar='N',
+                    help='number of epochs to train (default: 14)')
+    parser.add_argument('--learning-rate', type=float, default=1.0, metavar='LR',
+                    help='learning rate (default: 1.0)')
+    parser.add_argument('--gamma', type=float, default=0.7, metavar='M',
+                    help='Learning rate step gamma (default: 0.7)')
+    parser.add_argument('--no-cuda', action='store_true', default=True,
+                    help='disables CUDA training')
+    parser.add_argument('--dry-run', action='store_true', default=False,
+                    help='quickly check a single pass')
+    parser.add_argument('--seed', type=int, default=1, metavar='S',
+                    help='random seed (default: 1)')
+    parser.add_argument('--log-interval', type=int, default=200, metavar='N',
+                    help='how many batches to wait before logging training status')
+    parser.add_argument('--save-model', action='store_true', default=True,
+                    help='For Saving the current Model')
+    parser.add_argument('--model-filename', default="mnist.pt",
+                    help='file name for model')
+    parser.add_argument('--dataset-id',
+                    help='clearml dataset id')
+    return parser.parse_args()
 
 
 if __name__ == '__main__':
-    main()
+    args = get_args()
+    main(
+        args.clearml_project,
+        args.clearml_task,
+        args.clearml_output,
+        args.clearml_image,
+        args.clearml_queue,
+        args.batch_size,
+        args.test_batch_size,
+        args.learning_rate,
+        args.gamma,
+        args.save_model,
+        args.model_filename,
+        args.dry_run,
+        args.log_interval,
+        args.no_cuda,
+        args.seed,
+        args.dataset_id,
+        args.epochs
+    )

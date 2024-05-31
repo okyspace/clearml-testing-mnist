@@ -3,3 +3,4 @@ botocore
 clearml
 torch
 torchvision
+virtualenv
