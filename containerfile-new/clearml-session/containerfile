@@ -1,0 +1,28 @@
+# Preparing a container image for on-premise setup without necessary Jupyter and VSCode installers
+# Get the VSCode Version here ==> https://github.com/coder/code-server/releases, right click on the deb and get the link
+
+ARG CODE_SERVER_URL=https://github.com/coder/code-server/releases/download/v4.97.2/code-server_4.97.2_amd64.deb
+FROM ubuntu:22.04
+
+RUN apt update && apt install -y \
+	git \
+	python3-pip \
+	curl \
+	wget
+
+RUN echo "install vscode server ........"
+WORKDIR /root
+RUN curl -o code.deb -L https://github.com/coder/code-server/releases/download/v4.97.2/code-server_4.97.2_amd64.deb
+RUN dpkg -i code.deb
+
+COPY dropbearmulti /root/dropbearmulti
+
+RUN echo "install jupyter server ........"
+RUN pip install \
+	pip --upgrade \
+	setuptools --upgrade \
+	wheel --upgrade \ 
+	jupyterlab \
+	jupyterlab_git
+
+WORKDIR /root

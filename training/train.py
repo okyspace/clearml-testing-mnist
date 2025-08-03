@@ -11,6 +11,7 @@ def main(
     clearml_output,
     clearml_image,
     clearml_queue,
+    clearml_dataset_id,
     batch_size,
     test_batch_size,
     lr,
@@ -21,7 +22,6 @@ def main(
     log_interval,
     no_cuda,
     seed,
-    dataset_id,
     epochs
 ):
 	###################################################################################################################
@@ -137,11 +137,18 @@ def main(
         transforms.Grayscale(num_output_channels=1)
     ])
 
-    # get data from clearml datasets
-    dataset_path = Dataset.get(dataset_id=dataset_id)
-    dataset_path = dataset_path.get_local_copy()
-    train_ds = datasets.ImageFolder(root=os.path.join(dataset_path, 'train'), transform=transform)
-    test_ds = datasets.ImageFolder(root=os.path.join(dataset_path, 'test'), transform=transform)
+    if clearml_dataset_id is not None:
+        # get data from clearml datasets
+        dataset_path = Dataset.get(dataset_id=clearml_dataset_id)
+        dataset_path = dataset_path.get_local_copy()
+        train_ds = datasets.ImageFolder(root=os.path.join(dataset_path, 'train'), transform=transform)
+        test_ds = datasets.ImageFolder(root=os.path.join(dataset_path, 'test'), transform=transform)
+    else: 
+        # get from online MNIST
+        train_ds = datasets.MNIST('../data', train=True, download=True,
+                        transform=transform)
+        test_ds = datasets.MNIST('../data', train=False,
+                        transform=transform)
 
     # get data loader
     train_loader = torch.utils.data.DataLoader(train_ds,**train_kwargs)
@@ -202,7 +209,7 @@ def get_args():
                     help='For Saving the current Model')
     parser.add_argument('--model-filename', default="mnist.pt",
                     help='file name for model')
-    parser.add_argument('--dataset-id',
+    parser.add_argument('--clearml-dataset-id', default=None,
                     help='clearml dataset id')
     return parser.parse_args()
 
@@ -215,6 +222,7 @@ if __name__ == '__main__':
         args.clearml_output,
         args.clearml_image,
         args.clearml_queue,
+        args.clearml_dataset_id,
         args.batch_size,
         args.test_batch_size,
         args.learning_rate,
@@ -225,6 +233,5 @@ if __name__ == '__main__':
         args.log_interval,
         args.no_cuda,
         args.seed,
-        args.dataset_id,
         args.epochs
     )

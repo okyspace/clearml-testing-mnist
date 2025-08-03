@@ -1,14 +1,11 @@
 # clearml settings
-CLEARML_PROJECT="Project-Test"
-CLEARML_TASK="mnist-h800"
-# queue name can be found in clearml ui
-# CLEARML_QUEUE="queue-project-alpha-4cpu-8Gram"
+CLEARML_PROJECT="project-aieng"
+CLEARML_TASK="mnist-b200-job1"
 CLEARML_QUEUE="queue-project-b200-1cpu-2gbram"
-# store model in own project bucket
 CLEARML_OUTPUT="s3://s3.apps-crc.testing:80/clearml-data/models"
-# image for ml training
-CLEARML_IMAGE="docker.io/okydocker/pytorch:1.13.1-cuda11.6-cudnn8-runtime"
+CLEARML_IMAGE="docker.io/python:3.11"
 
+# experiment settings
 # experiment settings
 BATCH_SIZE=8
 TEST_BATCH_SIZE=8
