@@ -5,9 +5,6 @@ import argparse
 from clearml import PipelineController
 from pipeline_process import process
 from pipeline_train import train_model
-from pipeline_eval import eval_model
-from pipeline_testing import test_model
-from pipeline_integration import integ_test
 
 def get_args():
     parser = argparse.ArgumentParser(description='Pipeline')
@@ -49,10 +46,10 @@ def main():
     )
 
     # set the default execution queue to be used (per step we can override the execution)
-    pipe.set_default_execution_queue(args.queue)
+    pipe.set_default_execution_queue('queue-2cpu-4GRAM')
 
     pipe.add_function_step(
-        name='Preprocessing',
+        name='Process_Dataset',
         # parents=['Create_Dataset'],  # the pipeline will automatically detect the dependencies based on the kwargs inputs
         function=process,
         function_kwargs=dict(
@@ -66,10 +63,9 @@ def main():
         function_return=['dataset_id'],
         cache_executed_step=True,
     )
-
     pipe.add_function_step(
-        name='Train_Model-1',
-        parents=['Preprocessing'],  # the pipeline will automatically detect the dependencies based on the kwargs inputs
+        name='Train_Model',
+        # parents=['Process_Dataset'],  # the pipeline will automatically detect the dependencies based on the kwargs inputs
         function=train_model,
         function_kwargs=dict(
             project=args.experiment_project,
@@ -79,7 +75,7 @@ def main():
             output_uri=args.experiment_output,
             container_args=args.experiment_container_args,
             epochs=args.epochs,
-            dataset_id='${Preprocessing.dataset_id}',
+            dataset_id='${Process_Dataset.dataset_id}',
             batch_size=32, 
             test_batch_size=32, 
             log_interval=10, 
@@ -92,82 +88,12 @@ def main():
         cache_executed_step=True,
     )
 
-    pipe.add_function_step(
-        name='Train_Model-2',
-        parents=['Preprocessing'],  # the pipeline will automatically detect the dependencies based on the kwargs inputs
-        function=train_model,
-        function_kwargs=dict(
-            project=args.experiment_project,
-            task=args.experiment_task,
-            queue=args.experiment_queue,
-            image=args.experiment_image,
-            output_uri=args.experiment_output,
-            container_args=args.experiment_container_args,
-            epochs=args.epochs,
-            dataset_id='${Preprocessing.dataset_id}',
-            batch_size=64, 
-            test_batch_size=64, 
-            log_interval=10, 
-            seed=1, 
-            lr=0.01, 
-            gamma=0.07, 
-            save_model=True,
-            weights=args.experiment_weights),
-        function_return=['model_id'],
-        cache_executed_step=True,
-    )
-
-    pipe.add_function_step(
-        name='Train_Model-3',
-        parents=['Preprocessing'],  # the pipeline will automatically detect the dependencies based on the kwargs inputs
-        function=train_model,
-        function_kwargs=dict(
-            project=args.experiment_project,
-            task=args.experiment_task,
-            queue=args.experiment_queue,
-            image=args.experiment_image,
-            output_uri=args.experiment_output,
-            container_args=args.experiment_container_args,
-            epochs=args.epochs,
-            dataset_id='${Preprocessing.dataset_id}',
-            batch_size=64, 
-            test_batch_size=64, 
-            log_interval=10, 
-            seed=1, 
-            lr=0.02, 
-            gamma=0.07, 
-            save_model=True,
-            weights=args.experiment_weights),
-        function_return=['model_id'],
-        cache_executed_step=True,
-    )
-
-    pipe.add_function_step(
-        name='Eval_Model',
-        parents=['Train_Model-1', 'Train_Model-2', 'Train_Model-3'],  # the pipeline will automatically detect the dependencies based on the kwargs inputs
-        function=eval_model,
-        cache_executed_step=True,
-    )
-
-    pipe.add_function_step(
-        name='Robustness_Testing',
-        parents=['Eval_Model'],  # the pipeline will automatically detect the dependencies based on the kwargs inputs
-        function=test_model,
-        cache_executed_step=True,
-    )
-
-    pipe.add_function_step(
-        name='Integration_Testing',
-        parents=['Robustness_Testing'],  # the pipeline will automatically detect the dependencies based on the kwargs inputs
-        function=integ_test,
-        cache_executed_step=True,
-    )
     # For debugging purposes run on the pipeline on current machine
     # Use run_pipeline_steps_locally=True to further execute the pipeline component Tasks as subprocesses.
     #pipe.start_locally(run_pipeline_steps_locally=True)
 
     # Start the pipeline on the services queue (remote machine, default on the clearml-server)
-    pipe.start(queue=args.queue)
+    pipe.start()
 
     print('pipeline completed')    
 

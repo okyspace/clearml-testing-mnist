@@ -1,6 +1,12 @@
+<<<<<<< HEAD:interactivesession/run.sh
 IMAGE=docker.io/okydocker/ubuntu:22.04-session
 QUEUE=queue-project-alpha-interactivesession-2cpu-4Gram
 PROJECT="aieng"
+=======
+IMAGE=docker.io/okydocker/ubuntu:focal-session
+QUEUE=queue-session
+PROJECT="[Admin] Project-A"
+>>>>>>> parent of d4c67611d (Updated):session/run-session.sh
 
 clearml-session \
 	--docker "$IMAGE" \
