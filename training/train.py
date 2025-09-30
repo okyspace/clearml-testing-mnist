@@ -5,46 +5,12 @@ from clearml import Dataset
 from clearml import OutputModel
 import os
 
-<<<<<<< HEAD
-def main(
-    clearml_project,
-    clearml_task,
-    clearml_output,
-    clearml_image,
-    clearml_queue,
-    clearml_dataset_id,
-    batch_size,
-    test_batch_size,
-    lr,
-    gamma,
-    save_model,
-    model_filename,
-    dry_run,
-    log_interval,
-    no_cuda,
-    seed,
-    epochs
-):
-	###################################################################################################################
-	######## These are the three lines of codes added to the ML training codes for clearml to execute your task. ######
-	###################################################################################################################
-    # create clearml task in defined project and specify where the codes will output to
-    task = Task.init(project_name=clearml_project, task_name=clearml_task, output_uri=clearml_output)
-    # set the container to be used; the ml training will be done in the container
-    task.set_base_docker(docker_image=clearml_image)
-    # set the clearml queue. the queue will have a defined specs (cpu, ram, gpu) and 
-    # clearml will spin up a pod based on the defined specs to run the container set earlier.
-    task.execute_remotely(queue_name=clearml_queue, exit_process=True)
-    ###################################################################################################################
-=======
->>>>>>> parent of d4c67611d (Updated)
 
 clearml_project = "[Admin] Project-A"
 clearml_task = "train-mnist"
 queue = 'queue-2cpu-4GRAM'
 output = "s3://s3.apps-crc.testing:443/clearml-models"
 dataset_id = '0651fa9ab0e143a99f7bf4205e60067b'
-docker_args = ""
 
 image = "docker.io/okydocker/pytorch:1.13.1-cuda11.6-cudnn8-runtime"
 weights_file = "mnist.pt"
@@ -186,7 +152,6 @@ def main():
         transforms.Grayscale(num_output_channels=1)
     ])
 
-<<<<<<< HEAD
     if clearml_dataset_id is not None:
         # get data from clearml datasets
         dataset_path = Dataset.get(dataset_id=clearml_dataset_id)
@@ -199,13 +164,6 @@ def main():
                         transform=transform)
         test_ds = datasets.MNIST('../data', train=False,
                         transform=transform)
-=======
-    # get data from clearml datasets
-    dataset_path = Dataset.get(dataset_id=args.datasets_id)
-    dataset_path = dataset_path.get_local_copy()
-    train_ds = datasets.ImageFolder(root=os.path.join(dataset_path, 'train'), transform=transform)
-    test_ds = datasets.ImageFolder(root=os.path.join(dataset_path, 'test'), transform=transform)
->>>>>>> parent of d4c67611d (Updated)
 
     train_loader = torch.utils.data.DataLoader(train_ds,**train_kwargs)
     test_loader = torch.utils.data.DataLoader(test_ds, **test_kwargs)
@@ -226,76 +184,7 @@ def main():
         torch.jit.script(model).save(weights_file)
         OutputModel().update_weights(weights_file)
         # save in torchscipt instead. 
-<<<<<<< HEAD
-        # torch.save(model.state_dict(), args.model_filename)
-
-def get_args():
-    import argparse
-    # clearml settings
-    parser = argparse.ArgumentParser(description='PyTorch MNIST')
-    parser.add_argument('--clearml-project', 
-                    help='enter the project in clearml; must be a project that you have access rights')
-    parser.add_argument('--clearml-task', 
-                    help='enter the task name')
-    parser.add_argument('--clearml-queue', 
-                    help='enter the queue to orchestrate the clearml task')
-    parser.add_argument('--clearml-image', 
-                    help='enter the image to be used for model training')
-    parser.add_argument('--clearml-output', 
-                    help='enter the s3 bucket to store experiment outputs')
-    # experiment settings        
-    parser.add_argument('--batch-size', type=int, default=16, metavar='N',
-                    help='input batch size for training (default: 16)')
-    parser.add_argument('--test-batch-size', type=int, default=16, metavar='N',
-                    help='input batch size for testing (default: 16)')
-    parser.add_argument('--epochs', type=int, default=14, metavar='N',
-                    help='number of epochs to train (default: 14)')
-    parser.add_argument('--learning-rate', type=float, default=1.0, metavar='LR',
-                    help='learning rate (default: 1.0)')
-    parser.add_argument('--gamma', type=float, default=0.7, metavar='M',
-                    help='Learning rate step gamma (default: 0.7)')
-    parser.add_argument('--no-cuda', action='store_true', default=True,
-                    help='disables CUDA training')
-    parser.add_argument('--dry-run', action='store_true', default=False,
-                    help='quickly check a single pass')
-    parser.add_argument('--seed', type=int, default=1, metavar='S',
-                    help='random seed (default: 1)')
-    parser.add_argument('--log-interval', type=int, default=200, metavar='N',
-                    help='how many batches to wait before logging training status')
-    parser.add_argument('--save-model', action='store_true', default=True,
-                    help='For Saving the current Model')
-    parser.add_argument('--model-filename', default="mnist.pt",
-                    help='file name for model')
-    parser.add_argument('--clearml-dataset-id', default=None,
-                    help='clearml dataset id')
-    return parser.parse_args()
-
-
-if __name__ == '__main__':
-    args = get_args()
-    main(
-        args.clearml_project,
-        args.clearml_task,
-        args.clearml_output,
-        args.clearml_image,
-        args.clearml_queue,
-        args.clearml_dataset_id,
-        args.batch_size,
-        args.test_batch_size,
-        args.learning_rate,
-        args.gamma,
-        args.save_model,
-        args.model_filename,
-        args.dry_run,
-        args.log_interval,
-        args.no_cuda,
-        args.seed,
-        args.epochs
-    )
-=======
-        # torch.save(model.state_dict(), "mnist.pt")
 
 
 if __name__ == '__main__':
     main()
->>>>>>> parent of d4c67611d (Updated)
