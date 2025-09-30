@@ -9,8 +9,8 @@ import os
 clearml_project = "[Admin] Project-A"
 clearml_task = "train-mnist"
 queue = 'queue-2cpu-4GRAM'
-output = "s3://s3.apps-crc.testing:443/clearml-models"
-dataset_id = '0651fa9ab0e143a99f7bf4205e60067b'
+output = ""
+clearml_dataset_id = None
 
 image = "docker.io/okydocker/pytorch:1.13.1-cuda11.6-cudnn8-runtime"
 weights_file = "mnist.pt"
@@ -120,7 +120,7 @@ def main():
                         help='how many batches to wait before logging training status')
         parser.add_argument('--save-model', action='store_true', default=True,
                         help='For Saving the current Model')
-        parser.add_argument('--datasets-id', default=dataset_id)
+        parser.add_argument('--datasets-id', default=clearml_dataset_id)
         args = parser.parse_args()
         return args
 
